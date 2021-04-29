@@ -11,9 +11,18 @@ import GutenbergBlockComponent from './gutenberg-block-component';
 
 export class ImageBlockComponent extends GutenbergBlockComponent {
 	async uploadImage( fileDetails ) {
+		/**
+		 * The image block is initially not selected. It has to be though, if we want
+		 * to sendKeys to the file input. That's why we're clicking the block title
+		 * here.
+		 */
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( 'figure[aria-label="Block: Image"] .components-placeholder__label' )
+		);
 		await driverHelper.waitUntilLocatedAndVisible(
 			this.driver,
-			By.css( '.components-form-file-upload ' )
+			By.css( '.components-form-file-upload' )
 		);
 		const filePathInput = await this.driver.findElement(
 			By.css( '.components-form-file-upload input[type="file"]' )
