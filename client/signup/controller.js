@@ -25,7 +25,7 @@ import {
 } from './utils';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import store from 'store';
-import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
+import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
@@ -57,6 +57,7 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
  * Module variables
  */
 let initialContext;
+let previousFlowName;
 
 const removeWhiteBackground = function () {
 	if ( ! document ) {
@@ -235,6 +236,15 @@ export default {
 					( context.querystring ? '?' + context.querystring : '' ) +
 					( context.hashstring ? '#' + context.hashstring : '' );
 				return;
+			}
+		}
+
+		// Store the previous flow name (so we know from what flow we transitioned from).
+		if ( ! previousFlowName ) {
+			const persistedFlowName = getCurrentFlowName( context.store.getState() );
+			if ( persistedFlowName ) {
+				previousFlowName = persistedFlowName;
+				context.store.dispatch( setPreviousFlowName( previousFlowName ) );
 			}
 		}
 
